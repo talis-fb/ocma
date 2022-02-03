@@ -17,15 +17,13 @@ int **criar_matrix(int height, int width){
 }
 
 int main() {
-
-  // globais ----------------------
+  // GLOBAIS ----------------------
   int HEIGHT, WIDTH;
-  int grid[HEIGHT][WIDTH];
   char MY_ID[MAX_STR];
   int dinheiro = 0;
   int estoque_peixes = 0;
   StatusEstoque estoque_status = Vazio;
-  Barco barco;
+  Barco meu_barco;
   // --------------------------------
 
 
@@ -36,27 +34,18 @@ int main() {
 
   // === INÍCIO DA PARTIDA ===
   scanf("AREA %i %i", &HEIGHT, &WIDTH);  // lê a dimensão da área de pesca: altura (h) x largura (w)
-  scanf(" ID %s", MY_ID);        // ...e o id do bot
-  // obs: o " " antes de ID é necessário para ler o '\n' da linha anterior
+  scanf(" ID %s", MY_ID);        // ...e o id do bot. Obs: o " " antes de ID é necessário para ler o '\n' da linha anterior
 
 
   // Print Meu id
   fprintf(stderr, "Meu id = %s\n", MY_ID);
-  // -------------
 
   while (1) {
-
-    // LER GRID
-    // int **tempMatrix;
-    // tempMatrix = criar_matrix(HEIGHT, WIDTH);
-
+    // GRID
+    int grid[HEIGHT][WIDTH];
     readDataGrid(HEIGHT, WIDTH, grid);
 
-    // for(int i = 0; i < width; i ++)
-    //   PointerToArray_Int(temp[i], grid[i], width);
-
-
-        fprintf(stderr, "\n----------------------------\n");
+    fprintf(stderr, "\n----------- GRID ----------\n");
     for(int i = 0; i < HEIGHT; i ++){
       for (int y = 0; y < WIDTH; y++){
         fprintf(stderr, "%i ", grid[i][y] );
@@ -66,40 +55,37 @@ int main() {
     fprintf(stderr, "\n----------------------------\n");
 
 
-    // LER BOTS
+    // BOTS
     int num_bots;
     scanf(" BOTS %i", &num_bots);
 
-    Barco bots[num_bots], *temp_bots;
-    temp_bots = readDataBots(num_bots);
-    PointerToArray_Barco(temp_bots, bots, num_bots);
+    Barco bots[num_bots];
+    readDataBots(num_bots, bots);
 
-    printf("SELL\n");
-    scanf("%s", resposta);
-    break;
+    // Percorre os bots até achar o com seu ID
+    for (int i = 0; i < num_bots; i++) {
+      if( strcmp( bots[i].id, MY_ID ) == 0 ){
+        strcpy( meu_barco.id, bots[i].id );
+        meu_barco.posicao.x = bots[i].posicao.x;
+        meu_barco.posicao.y = bots[i].posicao.y;
+        break;
+      }
+    }
 
-
-    // Bots => bots[]
-    // grid => grid[][]
-
-
-
+    // Imprime os bots
     for( int i=0; i < num_bots; i++){
       //printf("Bots desse jogo: X: %d Y:%d ", bots[i].x, bots[i].y );
-      fprintf(stderr, "Bots desse jogo: ID: %s // X: %d Y:%d \n",
+      fprintf(stderr, "Bots desse jogo: ID: %s // X: %d, Y:%d \n",
           bots[i].id,
           bots[i].posicao.x,
           bots[i].posicao.y
           );
     }
-    fprintf(stderr, "\n");
 
+    // Imprime o seu bot
+    fprintf(stderr, "*NOSSO BOT => ID: %s // X: %d, Y: %d\n\n", meu_barco.id, meu_barco.posicao.x, meu_barco.posicao.y);
 
-
-
-
-
-    // Pega quantos campos possuem propriedade...
+    // Pega TODOS os campos com alguma propridade (posicoes que nao são só agua)
     int numero_lugares;
     Posicao *temp;
     temp = achar_lugares(HEIGHT, WIDTH, grid, &numero_lugares);
@@ -111,22 +97,21 @@ int main() {
 
     for( int i=0; i < numero_lugares; i++){
         //printf("Bots desse jogo: X: %d Y:%d ", bots[i].x, bots[i].y );
-        fprintf(stderr, "\t%d: %d %d // %d\n",
-                i,
+        fprintf(stderr, "\t%d // X:%d Y:%d \n",
+                pontos_importantes[i].tipo,
                 pontos_importantes[i].x,
-                pontos_importantes[i].y,
-                pontos_importantes[i].tipo
+                pontos_importantes[i].y
                );
     }
     fprintf(stderr, "\n");
 
 
+    char resposta[MAX_STR];
 
     printf("DOWN\n");
     scanf("%s", resposta);
     fgets(resposta, MAX_STR, stdin);
 
-    continue;
 
     // Ajuste todas as coordenadas dos lugares referente ao eixo do seu barco
     //ajustar_coordenadas(/*AQUI VAI SUA COORD*/, lugares, numero_lugares);
@@ -170,11 +155,6 @@ int main() {
     /* if(lugares_proximos[0].y < 0){ */
     /*   printf("RIGHT\n"); */
     /* } */
-
-
-
-    scanf("%s", resposta);
-    fgets(resposta, MAX_STR, stdin);
 
 
   }
