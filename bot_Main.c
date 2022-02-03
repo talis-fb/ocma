@@ -39,12 +39,15 @@ void PointerToArray_Barco(Barco *pointer, Barco vetor[], int n){
 }
 
 
-void readDataGrid(int h, int w, int grid[h][w]) {
+void readDataGrid(int h, int w, int *grid) {
   // lê os dados da área de pesca
-  for (int i = 0; i < h; i++) {
-    for (int j = 0; j < w; j++) {
-      scanf("%i", ((*grid + i)+j) );
+  fprintf(stderr, "GRID: \n");
+  for (int x = 0; x < h; x++) {
+    for (int y = 0; y < w; y++) {
+      scanf("%i", ((grid + y)+x) );
+      fprintf(stderr, "%d ", *((grid + y)+x) );
     }
+    fprintf(stderr, "\n");
   }
 }
 
@@ -58,19 +61,20 @@ Barco *readDataBots(int n) {
 }
 
 Posicao *achar_lugares(int h, int w, int grid[h][w], int *numero_lugares){
-  Posicao *lugares = malloc(sizeof(Posicao) );
+  Posicao *lugares = malloc(sizeof(Posicao));
 
   int n = 0;
-  for (int i = 0; i < h; i++) {
-    for (int j = 0; j < w; j++) {
+  for (int x = 0; x < h; x++) {
+    for (int y = 0; y < w; y++) {
 
-      if(grid[i][j] > 0) {
+      //if( grid[x][y]> 0 && grid[x][y] < 50 ) {
+      if( grid[x][y] == 1 || (  grid[x][y] > 10 && grid[x][y] < 40 ) ) {
         n++;
-        lugares = realloc(lugares, sizeof(Posicao) * (n+1) );
+        lugares = realloc(lugares, sizeof(Posicao) * (n) );
 
-        lugares[n].x = i;
-        lugares[n].y = j;
-        lugares[n].tipo = grid[i][j];
+        lugares[n-1].x = x;
+        lugares[n-1].y = y;
+        lugares[n-1].tipo = grid[x][y];
       }
 
     }
@@ -120,7 +124,15 @@ int main() {
   while (1) {
 
     // LER GRID
-    readDataGrid(HEIGHT, WIDTH, grid);
+    readDataGrid(HEIGHT, WIDTH, &grid[0][0]);
+
+    fprintf(stderr, "GRID (dnv):: \n");
+    for (int x = 0; x < HEIGHT; x++) {
+      for (int y = 0; y < WIDTH; y++) {
+        fprintf(stderr, "%d ", grid[x][y] );
+      }
+      fprintf(stderr, "\n");
+    }
 
     // LER BOTS
     int num_bots;
@@ -128,8 +140,12 @@ int main() {
 
     Barco bots[num_bots], *temp_bots;
     temp_bots = readDataBots(num_bots);
-
     PointerToArray_Barco(temp_bots, bots, num_bots);
+
+    // Bots => bots[]
+    // grid => grid[][]
+
+
 
     for( int i=0; i < num_bots; i++){
       //printf("Bots desse jogo: X: %d Y:%d ", bots[i].x, bots[i].y );
@@ -139,65 +155,84 @@ int main() {
           bots[i].posicao.y
           );
     }
-    //fprintf(stderr, "Meu bot ID: %s // X: %d, Y:%d \n", bots[i].x, bots[i].y );
+    fprintf(stderr, "\n");
 
-    printf("DOWN\n");
 
-    scanf("%s", resposta);
-    fgets(resposta, MAX_LINE, stdin);
-
-    continue;
 
 
 
 
     // Pega quantos campos possuem propriedade...
     int numero_lugares;
-    Posicao *lugares;
-    lugares = achar_lugares(HEIGHT, WIDTH, grid, &numero_lugares);
+    Posicao *temp;
+    temp = achar_lugares(HEIGHT, WIDTH, grid, &numero_lugares);
+
+    Posicao pontos_importantes[ numero_lugares ];
+    PointerToArray_Posicao(temp, pontos_importantes, numero_lugares);
+
+    fprintf(stderr, "numero lugares legais: %d \n\n", numero_lugares);
+
+    for( int i=0; i < numero_lugares; i++){
+        //printf("Bots desse jogo: X: %d Y:%d ", bots[i].x, bots[i].y );
+        fprintf(stderr, "\t%d: %d %d // %d\n",
+                i,
+                pontos_importantes[i].x,
+                pontos_importantes[i].y,
+                pontos_importantes[i].tipo
+               );
+    }
+    fprintf(stderr, "\n");
+
+
+
+    printf("DOWN\n");
+    scanf("%s", resposta);
+    fgets(resposta, MAX_LINE, stdin);
+
+    continue;
 
     // Ajuste todas as coordenadas dos lugares referente ao eixo do seu barco
     //ajustar_coordenadas(/*AQUI VAI SUA COORD*/, lugares, numero_lugares);
 
 
-    Posicao *temp = malloc(sizeof(Posicao));
-    for (int i = 1; i < numero_lugares; i++){
-      for (int j = 0; j < numero_lugares - i; j++) {
-        int distancia1 = lugares[j].x - lugares[j].y;
-        int distancia2 = lugares[j+1].x - lugares[j+1].y;
-        if ( distancia2 > distancia1 ) {
-          continue;
-        }
-        *temp = lugares[j];
-        lugares[j] = lugares[j + 1];
-        lugares[j + 1] = *temp;
-      }
-    }
-    free(temp);
+    /* Posicao *temp = malloc(sizeof(Posicao)); */
+    /* for (int i = 1; i < numero_lugares; i++){ */
+    /*   for (int j = 0; j < numero_lugares - i; j++) { */
+    /*     int distancia1 = lugares[j].x - lugares[j].y; */
+    /*     int distancia2 = lugares[j+1].x - lugares[j+1].y; */
+    /*     if ( distancia2 > distancia1 ) { */
+    /*       continue; */
+    /*     } */
+    /*     *temp = lugares[j]; */
+    /*     lugares[j] = lugares[j + 1]; */
+    /*     lugares[j + 1] = *temp; */
+    /*   } */
+    /* } */
+    /* free(temp); */
 
-    Posicao lugares_proximos[5];
-    for (int i = 0; i < 5; i++){
-      lugares_proximos[i] = lugares[i];
-    }
+    /* Posicao lugares_proximos[5]; */
+    /* for (int i = 0; i < 5; i++){ */
+    /*   lugares_proximos[i] = lugares[i]; */
+    /* } */
 
-    free(lugares);
+    /* free(lugares); */
 
     // ALGORITMO PARA FILTRAR POR PREFERENCIA, ANALISANDO O ESTOQUE ATUAL DO CABA...
 
     // Seta pra onde ir...
 
-    if(lugares_proximos[0].x > 0){
-      printf("UP\n");
-    }
-    if (lugares_proximos[0].y > 0){
-      printf("LEFT\n");
-    }
-    if(lugares_proximos[0].x < 0){
-      printf("DOWN\n");
-    }
-    if(lugares_proximos[0].y < 0){
-      printf("RIGHT\n");
-    }
+    /* if(lugares_proximos[0].x > 0){ */
+    /*   printf("UP\n"); */
+    /* } */
+    /* if (lugares_proximos[0].y > 0){ */
+    /*   printf("LEFT\n"); */
+    /* } */
+    /* if(lugares_proximos[0].x < 0){ */
+    /*   printf("DOWN\n"); */
+    /* } */
+    /* if(lugares_proximos[0].y < 0){ */
+    /*   printf("RIGHT\n"); */
+    /* } */
 
 
 
