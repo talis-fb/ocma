@@ -7,15 +7,6 @@
 #include "read.h"
 #include "grid.h"
 
-int **criar_matrix(int height, int width){
-  int **matrix = malloc(sizeof(int*) * width);
-
-  for(int i=0; i < width; i++)
-    matrix[i] = malloc(sizeof(int) * height);
-
-  return matrix;
-}
-
 int main() {
   // GLOBAIS ----------------------
   int HEIGHT, WIDTH;
@@ -41,10 +32,16 @@ int main() {
   fprintf(stderr, "Meu id = %s\n", MY_ID);
 
   while (1) {
+
+    // ----------------------
+    // Leitura dos dados
+    // ----------------------
+
     // GRID
     int grid[HEIGHT][WIDTH];
     readDataGrid(HEIGHT, WIDTH, grid);
 
+    // Imprimir grid
     fprintf(stderr, "\n----------- GRID ----------\n");
     for(int i = 0; i < HEIGHT; i ++){
       for (int y = 0; y < WIDTH; y++){
@@ -62,7 +59,7 @@ int main() {
     Barco bots[num_bots];
     readDataBots(num_bots, bots);
 
-    // Percorre os bots até achar o com seu ID
+    // Percorrer os bots até achar o com seu ID
     for (int i = 0; i < num_bots; i++) {
       if( strcmp( bots[i].id, MY_ID ) == 0 ){
         strcpy( meu_barco.id, bots[i].id );
@@ -74,7 +71,6 @@ int main() {
 
     // Imprime os bots
     for( int i=0; i < num_bots; i++){
-      //printf("Bots desse jogo: X: %d Y:%d ", bots[i].x, bots[i].y );
       fprintf(stderr, "Bots desse jogo: ID: %s // X: %d, Y:%d \n",
           bots[i].id,
           bots[i].posicao.x,
@@ -84,6 +80,12 @@ int main() {
 
     // Imprime o seu bot
     fprintf(stderr, "*NOSSO BOT => ID: %s // X: %d, Y: %d\n\n", meu_barco.id, meu_barco.posicao.x, meu_barco.posicao.y);
+
+
+
+    // --------------------------------------
+    // Filtro e seleção dos dados relevante
+    // --------------------------------------
 
     // Pega TODOS os campos com alguma propridade (posicoes que nao são só agua)
     int numero_lugares;
@@ -96,7 +98,6 @@ int main() {
     fprintf(stderr, "numero lugares legais: %d \n\n", numero_lugares);
 
     for( int i=0; i < numero_lugares; i++){
-        //printf("Bots desse jogo: X: %d Y:%d ", bots[i].x, bots[i].y );
         fprintf(stderr, "\t%d // X:%d Y:%d \n",
                 pontos_importantes[i].tipo,
                 pontos_importantes[i].x,
@@ -106,12 +107,10 @@ int main() {
     fprintf(stderr, "\n");
 
 
-    char resposta[MAX_STR];
 
-    printf("DOWN\n");
-    scanf("%s", resposta);
-    fgets(resposta, MAX_STR, stdin);
-
+    // --------------------------------------
+    // Analise e tomada de decisão
+    // --------------------------------------
 
     // Ajuste todas as coordenadas dos lugares referente ao eixo do seu barco
     //ajustar_coordenadas(/*AQUI VAI SUA COORD*/, lugares, numero_lugares);
@@ -156,7 +155,10 @@ int main() {
     /*   printf("RIGHT\n"); */
     /* } */
 
-
+    char resposta[MAX_STR];
+    printf("DOWN\n");
+    scanf("%s", resposta);
+    fgets(resposta, MAX_STR, stdin);
   }
 
   return 0;
