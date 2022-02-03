@@ -2,93 +2,18 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_STR 50
-#define MAX_LINE 50
+#include "interfaces.h"
+#include "methods.h"
+#include "read.h"
+#include "grid.h"
 
-// Definições
-typedef struct IPosicao {
-  int x, y;
-  int tipo;
-} Posicao;
+int **criar_matrix(int height, int width){
+  int **matrix = malloc(sizeof(int*) * width);
 
-typedef enum IStatusEstoque  {
-  Vazio = 0,
-  Razoavel = 5,
-  Cheio = 10
-} StatusEstoque;
+  for(int i=0; i < width; i++)
+    matrix[i] = malloc(sizeof(int) * height);
 
-typedef struct IBarco {
-  char id[MAX_STR];
-  Posicao posicao;
-  int estoque;
-  StatusEstoque status_estoque;
-} Barco;
-
-void PointerToArray_Posicao(Posicao *pointer, Posicao vetor[], int n){
-  for( int i=0; i < n; i++)
-    vetor[i] = pointer[i];
-
-  free(pointer);
-}
-
-void PointerToArray_Barco(Barco *pointer, Barco vetor[], int n){
-  for( int i=0; i < n; i++)
-    vetor[i] = pointer[i];
-
-  free(pointer);
-}
-
-
-void readDataGrid(int h, int w, int *grid) {
-  // lê os dados da área de pesca
-  fprintf(stderr, "GRID: \n");
-  for (int x = 0; x < h; x++) {
-    for (int y = 0; y < w; y++) {
-      scanf("%i", ((grid + y)+x) );
-      fprintf(stderr, "%d ", *((grid + y)+x) );
-    }
-    fprintf(stderr, "\n");
-  }
-}
-
-Barco *readDataBots(int n) {
-  Barco *bots = malloc(sizeof(Posicao) * n);
-  for (int i = 0; i < n; i++) {
-    scanf("%s %i %i", &bots[i].id, &bots[i].posicao.y, &bots[i].posicao.x );
-  }
-
-  return bots;
-}
-
-Posicao *achar_lugares(int h, int w, int grid[h][w], int *numero_lugares){
-  Posicao *lugares = malloc(sizeof(Posicao));
-
-  int n = 0;
-  for (int x = 0; x < h; x++) {
-    for (int y = 0; y < w; y++) {
-
-      //if( grid[x][y]> 0 && grid[x][y] < 50 ) {
-      if( grid[x][y] == 1 || (  grid[x][y] > 10 && grid[x][y] < 40 ) ) {
-        n++;
-        lugares = realloc(lugares, sizeof(Posicao) * (n) );
-
-        lugares[n-1].x = x;
-        lugares[n-1].y = y;
-        lugares[n-1].tipo = grid[x][y];
-      }
-
-    }
-  }
-
-  *numero_lugares = n;
-  return lugares;
-}
-
-void ajustar_coordenadas(Posicao CENTRO, Posicao *coordenadas, int length){
-  for (int i = 0; i < length; i++) {
-    coordenadas[i].x = CENTRO.x - coordenadas[i].x;
-    coordenadas[i].y = CENTRO.y - coordenadas[i].y;
-  }
+  return matrix;
 }
 
 int main() {
@@ -100,8 +25,6 @@ int main() {
   int dinheiro = 0;
   int estoque_peixes = 0;
   StatusEstoque estoque_status = Vazio;
-  char resposta[MAX_STR];   // dados temporários
-
   Barco barco;
   // --------------------------------
 
@@ -124,15 +47,24 @@ int main() {
   while (1) {
 
     // LER GRID
-    readDataGrid(HEIGHT, WIDTH, &grid[0][0]);
+    // int **tempMatrix;
+    // tempMatrix = criar_matrix(HEIGHT, WIDTH);
 
-    fprintf(stderr, "GRID (dnv):: \n");
-    for (int x = 0; x < HEIGHT; x++) {
-      for (int y = 0; y < WIDTH; y++) {
-        fprintf(stderr, "%d ", grid[x][y] );
+    readDataGrid(HEIGHT, WIDTH, grid);
+
+    // for(int i = 0; i < width; i ++)
+    //   PointerToArray_Int(temp[i], grid[i], width);
+
+
+        fprintf(stderr, "\n----------------------------\n");
+    for(int i = 0; i < HEIGHT; i ++){
+      for (int y = 0; y < WIDTH; y++){
+        fprintf(stderr, "%i ", grid[i][y] );
       }
       fprintf(stderr, "\n");
     }
+    fprintf(stderr, "\n----------------------------\n");
+
 
     // LER BOTS
     int num_bots;
@@ -141,6 +73,11 @@ int main() {
     Barco bots[num_bots], *temp_bots;
     temp_bots = readDataBots(num_bots);
     PointerToArray_Barco(temp_bots, bots, num_bots);
+
+    printf("SELL\n");
+    scanf("%s", resposta);
+    break;
+
 
     // Bots => bots[]
     // grid => grid[][]
@@ -187,7 +124,7 @@ int main() {
 
     printf("DOWN\n");
     scanf("%s", resposta);
-    fgets(resposta, MAX_LINE, stdin);
+    fgets(resposta, MAX_STR, stdin);
 
     continue;
 
@@ -237,7 +174,7 @@ int main() {
 
 
     scanf("%s", resposta);
-    fgets(resposta, MAX_LINE, stdin);
+    fgets(resposta, MAX_STR, stdin);
 
 
   }
