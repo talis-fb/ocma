@@ -6,6 +6,7 @@
 #include "methods.h"
 #include "read.h"
 #include "grid.h"
+#include "print.h"
 
 int main() {
   // GLOBAIS ----------------------
@@ -42,14 +43,7 @@ int main() {
     readDataGrid(HEIGHT, WIDTH, grid);
 
     // Imprimir grid
-    fprintf(stderr, "\n----------- GRID ----------\n");
-    for(int i = 0; i < HEIGHT; i ++){
-      for (int y = 0; y < WIDTH; y++){
-        fprintf(stderr, "%i ", grid[i][y] );
-      }
-      fprintf(stderr, "\n");
-    }
-    fprintf(stderr, "\n----------------------------\n");
+    //printGrid(HEIGHT, WIDTH, grid);
 
 
     // BOTS
@@ -70,13 +64,7 @@ int main() {
     }
 
     // Imprime os bots
-    for( int i=0; i < num_bots; i++){
-      fprintf(stderr, "Bots desse jogo: ID: %s // X: %d, Y:%d \n",
-          bots[i].id,
-          bots[i].posicao.x,
-          bots[i].posicao.y
-          );
-    }
+    printBots(num_bots, bots);
 
     // Imprime o seu bot
     fprintf(stderr, "*NOSSO BOT => ID: %s // X: %d, Y: %d\n\n", meu_barco.id, meu_barco.posicao.x, meu_barco.posicao.y);
@@ -97,14 +85,8 @@ int main() {
 
     fprintf(stderr, "numero lugares legais: %d \n\n", numero_lugares);
 
-    for( int i=0; i < numero_lugares; i++){
-        fprintf(stderr, "\t%d // X:%d Y:%d \n",
-                pontos_importantes[i].tipo,
-                pontos_importantes[i].x,
-                pontos_importantes[i].y
-               );
-    }
-    fprintf(stderr, "\n");
+    // Imprime eles
+    //printPosicoes(numero_lugares, pontos_importantes);
 
 
 
@@ -113,30 +95,41 @@ int main() {
     // --------------------------------------
 
     // Ajuste todas as coordenadas dos lugares referente ao eixo do seu barco
-    //ajustar_coordenadas(/*AQUI VAI SUA COORD*/, lugares, numero_lugares);
+    ajustar_coordenadas(meu_barco.posicao, pontos_importantes, numero_lugares);
+
+    fprintf(stderr, "Lugare AJEITADOS: (CENTRO: X%d Y%d) \n", meu_barco.posicao.x, meu_barco.posicao.y);
+
+    printPosicoes(numero_lugares, pontos_importantes);
+
+    //
+    // ERRO => As coordenadas estão sendo calculadas com o 0 sendo a primeira unidade...
+    //
+
+    Posicao *tempL = malloc(sizeof(Posicao));
+    for (int i = 1; i < numero_lugares; i++){
+      for (int j = 0; j < numero_lugares - i; j++) {
+        int distancia1 = module( pontos_importantes[j].x) + module( pontos_importantes[j].y);
+        int distancia2 = module( pontos_importantes[j+1].x) + module( pontos_importantes[j+1].y);
+
+        if ( distancia1 < distancia2 ) {
+          continue;
+        }
+        *tempL =pontos_importantes[j];
+        pontos_importantes[j] =pontos_importantes[j + 1];
+        pontos_importantes[j + 1] = *tempL;
+      }
+    }
+    free(tempL);
 
 
-    /* Posicao *temp = malloc(sizeof(Posicao)); */
-    /* for (int i = 1; i < numero_lugares; i++){ */
-    /*   for (int j = 0; j < numero_lugares - i; j++) { */
-    /*     int distancia1 = lugares[j].x - lugares[j].y; */
-    /*     int distancia2 = lugares[j+1].x - lugares[j+1].y; */
-    /*     if ( distancia2 > distancia1 ) { */
-    /*       continue; */
-    /*     } */
-    /*     *temp = lugares[j]; */
-    /*     lugares[j] = lugares[j + 1]; */
-    /*     lugares[j + 1] = *temp; */
-    /*   } */
-    /* } */
-    /* free(temp); */
+    Posicao lugares_proximos[5];
+    for (int i = 0; i < 5; i++){
+      lugares_proximos[i] = pontos_importantes[i];
+    }
 
-    /* Posicao lugares_proximos[5]; */
-    /* for (int i = 0; i < 5; i++){ */
-    /*   lugares_proximos[i] = lugares[i]; */
-    /* } */
+    printPosicoes(5, lugares_proximos);
 
-    /* free(lugares); */
+
 
     // ALGORITMO PARA FILTRAR POR PREFERENCIA, ANALISANDO O ESTOQUE ATUAL DO CABA...
 
