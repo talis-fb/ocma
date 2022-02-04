@@ -90,30 +90,33 @@ int main() {
 
 
 
-    // --------------------------------------
-    // Analise e tomada de decisão
-    // --------------------------------------
+    // -------------------------------------------
+    // Analise e seleção dos pontos MAIS PROXIMOS
+    // -------------------------------------------
 
     // Ajuste todas as coordenadas dos lugares referente ao eixo do seu barco
     ajustar_coordenadas(meu_barco.posicao, pontos_importantes, numero_lugares);
 
     fprintf(stderr, "Lugare AJEITADOS: (CENTRO: X%d Y%d) \n", meu_barco.posicao.x, meu_barco.posicao.y);
 
-    printPosicoes(numero_lugares, pontos_importantes);
-
-    //
-    // ERRO => As coordenadas estão sendo calculadas com o 0 sendo a primeira unidade...
-    //
+    //printPosicoes(numero_lugares, pontos_importantes);
 
     Posicao *tempL = malloc(sizeof(Posicao));
     for (int i = 1; i < numero_lugares; i++){
       for (int j = 0; j < numero_lugares - i; j++) {
-        int distancia1 = module( pontos_importantes[j].x) + module( pontos_importantes[j].y);
+        int distancia1 = module( pontos_importantes[j].x ) + module( pontos_importantes[j].y);
         int distancia2 = module( pontos_importantes[j+1].x) + module( pontos_importantes[j+1].y);
 
         if ( distancia1 < distancia2 ) {
           continue;
         }
+
+        if ( distancia1 == distancia2 ){
+          if( pontos_importantes[j].tipo > pontos_importantes[j+1].tipo ){
+            continue;
+          }
+        }
+
         *tempL =pontos_importantes[j];
         pontos_importantes[j] =pontos_importantes[j + 1];
         pontos_importantes[j + 1] = *tempL;
@@ -122,12 +125,12 @@ int main() {
     free(tempL);
 
 
-    Posicao lugares_proximos[5];
-    for (int i = 0; i < 5; i++){
+    Posicao lugares_proximos[9];
+    for (int i = 0; i < 9; i++){
       lugares_proximos[i] = pontos_importantes[i];
     }
 
-    printPosicoes(5, lugares_proximos);
+    printPosicoes(9, lugares_proximos);
 
 
 
