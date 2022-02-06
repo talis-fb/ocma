@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -7,6 +8,17 @@
 #include "read.h"
 #include "grid.h"
 #include "print.h"
+#include "output.h"
+#include "ia.h"
+#include <time.h>
+
+void delay(int number_of_seconds){
+    int milli_seconds = 1000 * number_of_seconds;
+    clock_t start_time = clock();
+    while (clock() < (start_time + milli_seconds) ){
+
+    }
+}
 
 int main() {
   // GLOBAIS ----------------------
@@ -16,6 +28,7 @@ int main() {
   int estoque_peixes = 0;
   StatusEstoque estoque_status = Vazio;
   Barco meu_barco;
+  meu_barco.estoque = 0;
   // --------------------------------
 
 
@@ -133,28 +146,25 @@ int main() {
     printPosicoes(9, lugares_proximos);
 
 
+    // DECISAO PARA ONDE IR
+    Posicao lugar_para_ir = decidir(meu_barco, numero_lugares, pontos_importantes);
+    int tipo_lugar = lugar_para_ir.tipo;
 
-    // ALGORITMO PARA FILTRAR POR PREFERENCIA, ANALISANDO O ESTOQUE ATUAL DO CABA...
+    if(lugar_para_ir.x == 0 && lugar_para_ir.y == 0){
+      if(tipo_lugar == 1 ){
+        vender_porto(&meu_barco);
+      } else {
+        pescar(&meu_barco);
+      }
+    } else {
+        mover(&meu_barco, lugar_para_ir, bots, num_bots);
+    }
 
-    // Seta pra onde ir...
-
-    /* if(lugares_proximos[0].x > 0){ */
-    /*   printf("UP\n"); */
-    /* } */
-    /* if (lugares_proximos[0].y > 0){ */
-    /*   printf("LEFT\n"); */
-    /* } */
-    /* if(lugares_proximos[0].x < 0){ */
-    /*   printf("DOWN\n"); */
-    /* } */
-    /* if(lugares_proximos[0].y < 0){ */
-    /*   printf("RIGHT\n"); */
-    /* } */
 
     char resposta[MAX_STR];
-    printf("DOWN\n");
     scanf("%s", resposta);
     fgets(resposta, MAX_STR, stdin);
+    delay(100);
   }
 
   return 0;
