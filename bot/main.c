@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -93,13 +92,35 @@ int main() {
     Posicao *temp;
     temp = achar_lugares(HEIGHT, WIDTH, grid, &numero_lugares);
 
-    Posicao pontos_importantes[ numero_lugares ];
-    PointerToArray_Posicao(temp, pontos_importantes, numero_lugares);
+    // Transforma o pointer para um array (a função já faz o free do pointer)
+    Posicao pontos_importantes_temp[ numero_lugares ];
+    PointerToArray_Posicao(temp, pontos_importantes_temp, numero_lugares);
+
+    // Agora ele remove TODOS os campo que possuem a mesma coordenada de um bot
+    Posicao *pontos_importantes_sem_bot = NULL;
+    int novo_numero_lugares = 0;
+    for(int l = 0; l < numero_lugares; l++){
+      for(int b = 0; b < num_bots;b++){
+        Posicao bot = bots[b].posicao;
+        Posicao lugar = pontos_importantes_temp[l];
+        if( (bot.x != lugar.x) && (bot.y != lugar.y) ){
+          pontos_importantes_sem_bot = realloc(pontos_importantes_sem_bot, sizeof(Posicao) * (l+1) );
+          pontos_importantes_sem_bot[l].x = lugar.x;
+          pontos_importantes_sem_bot[l].y = lugar.y;
+          pontos_importantes_sem_bot[l].tipo = lugar.tipo;
+          novo_numero_lugares++;
+        }
+      }
+    }
+
+    Posicao pontos_importantes[ novo_numero_lugares ];
+    PointerToArray_Posicao(pontos_importantes_sem_bot, pontos_importantes, novo_numero_lugares);
+
 
     fprintf(stderr, "numero lugares legais: %d \n\n", numero_lugares);
 
     // Imprime eles
-    //printPosicoes(numero_lugares, pontos_importantes);
+    printPosicoes(numero_lugares, pontos_importantes);
 
 
 
@@ -114,12 +135,38 @@ int main() {
 
     //printPosicoes(numero_lugares, pontos_importantes);
 
+    // Aqui ele ordena todos os pontos, por meio da "distancia", sendo ela a soma do eixo com o Y
+    //  Além disso ele considera pontos
     Posicao *tempL = malloc(sizeof(Posicao));
     for (int i = 1; i < numero_lugares; i++){
       for (int j = 0; j < numero_lugares - i; j++) {
         int distancia1 = module( pontos_importantes[j].x ) + module( pontos_importantes[j].y);
         int distancia2 = module( pontos_importantes[j+1].x) + module( pontos_importantes[j+1].y);
 
+        /* // Verifica se algum dos pontos */
+        /* int ponto1_is_bot = 0; */
+        /* int ponto2_is_bot = 0; */
+
+        /* for(int h = 0; h < num_bots;h++){ */
+        /*     Posicao bot = bots[h].posicao; */
+
+        /*     ponto1_is_bot = (pontos_importantes[j].x == bot.x) && (pontos_importantes[j].y == bot.y); */
+        /*     ponto2_is_bot = (pontos_importantes[j+1].x == bot.x) && (pontos_importantes[j+1].y == bot.y); */
+        /* } */
+
+        /* // */
+        /* if(ponto1_is_bot){ */
+        /*     *tempL =pontos_importantes[j]; */
+        /*     pontos_importantes[j] =pontos_importantes[j + 1]; */
+        /*     pontos_importantes[j + 1] = *tempL; */
+        /*     continue; */
+        /* } */
+
+        /* if(ponto2_is_bot){ */
+        /*     continue; */
+        /* } */
+
+        // Verifica as distancia e as ordena SE nenhum dos pontos for bot
         if ( distancia1 < distancia2 ) {
           continue;
         }
@@ -143,7 +190,7 @@ int main() {
       lugares_proximos[i] = pontos_importantes[i];
     }
 
-    printPosicoes(9, lugares_proximos);
+    //printPosicoes(9, lugares_proximos);
 
 
     // DECISAO PARA ONDE IR

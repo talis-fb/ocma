@@ -65,15 +65,15 @@ Posicao loop_decisao(int estoque, Posicao opcoes[], int i, int max){
     return opcoes[i];
   }
 
-  fprintf(stderr, "Lugar (%d,%d) T%d Est%d  Rel%d \n", opcoes[i].x, opcoes[i].y, tipo, estoque, relevancia_ponto);
+  //fprintf(stderr, "Lugar (%d,%d) T%d Est%d  Rel%d \n", opcoes[i].x, opcoes[i].y, tipo, estoque, relevancia_ponto);
 
   return loop_decisao(estoque, opcoes, (i+1), max );
 }
 
 Posicao decidir(Barco barco, int n, Posicao opcoes[n]){
-  fprintf(stderr, "INICIADA DECISAO... \n");
+  //fprintf(stderr, "INICIADA DECISAO... \n");
 
-  int tolerancia_distancia = 14; // Até que distancia ele decide ir atras do maior
+  //int tolerancia_distancia = 14; // Até que distancia ele decide ir atras do maior
   int estoque = barco.estoque;
 
   return loop_decisao(estoque, opcoes, 0, n);

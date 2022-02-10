@@ -1,17 +1,21 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "interfaces.h"
-#include "methods.h"
 #include "grid.h"
 
 
+void ajustar_coordenada(Posicao CENTRO, Posicao coordenada){
+  coordenada.x = CENTRO.x - coordenada.x;
+  coordenada.y = CENTRO.y - coordenada.y;
+}
+
 void ajustar_coordenadas(Posicao CENTRO, Posicao coordenadas[], int length){
   for (int i = 0; i < length; i++) {
-    coordenadas[i].x = CENTRO.x - coordenadas[i].x;
-    coordenadas[i].y = CENTRO.y - coordenadas[i].y;
+    //ajustar_coordenada(CENTRO, coordenadas[i]);
+    coordenadas[i].x = (CENTRO.x - coordenadas[i].x);
+    coordenadas[i].y = (CENTRO.y - coordenadas[i].y);
   }
 }
 
