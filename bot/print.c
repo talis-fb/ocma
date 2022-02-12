@@ -3,7 +3,6 @@
 #include <string.h>
 
 #include "interfaces.h"
-#include "methods.h"
 #include "print.h"
 
 void printGrid(int h, int w, int grid[h][w]) {

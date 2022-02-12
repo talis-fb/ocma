@@ -2,6 +2,6 @@
 #define READ
 
 void readDataGrid(int h, int w, int grid[h][w]);
-Barco *readDataBots(int n);
+void readDataBots(int n, Barco bots[n]);
 
 #endif

@@ -15,7 +15,7 @@ void delay(int number_of_seconds){
     int milli_seconds = 1000 * number_of_seconds;
     clock_t start_time = clock();
     while (clock() < (start_time + milli_seconds) ){
-
+      //
     }
 }
 
@@ -79,6 +79,7 @@ int main() {
       }
       bots[i].posicao.x = bots_temp[i].posicao.x;
       bots[i].posicao.y = bots_temp[i].posicao.y;
+      strcpy( bots[i].id, bots_temp[i].id );
       //bots[i].id = bots_temp[i].id;
      // bots[i] = bots_temp[i];
     }
@@ -90,6 +91,29 @@ int main() {
       posicoes_bots[i].x = bots[i].posicao.x;
       posicoes_bots[i].y = bots[i].posicao.y;
     }
+
+    Lados bots_ao_lado;
+    bots_ao_lado.up = 0;
+    bots_ao_lado.down = 0;
+    bots_ao_lado.left = 0;
+    bots_ao_lado.right = 0;
+
+    for (int i = 0; i < num_bots; i++) {
+      if( posicoes_bots[i].x == meu_barco.posicao.x)
+        if( posicoes_bots[i].y == (meu_barco.posicao.y - 1))
+          bots_ao_lado.right = 1;
+      if( posicoes_bots[i].x == meu_barco.posicao.x)
+        if( posicoes_bots[i].y == (meu_barco.posicao.y + 1))
+          bots_ao_lado.left = 1;
+      if( posicoes_bots[i].x == (meu_barco.posicao.x + 1))
+        if( posicoes_bots[i].y == meu_barco.posicao.y)
+          bots_ao_lado.up = 1;
+      if( posicoes_bots[i].x == (meu_barco.posicao.x - 1))
+        if( posicoes_bots[i].y == meu_barco.posicao.y)
+          bots_ao_lado.down = 1;
+    }
+
+
 
     // Imprime os bots
     printBots(num_bots, bots);
@@ -112,23 +136,6 @@ int main() {
     // Transforma o pointer para um array (a função já faz o free do pointer)
     Posicao todos_pontos_importantes[ numero_todos_lugares ];
     PointerToArray_Posicao(todos_pontos_importantes_temp, todos_pontos_importantes, numero_todos_lugares);
-
-    // Agora ele remove TODOS os campo que possuem a mesma coordenada de um bot
-    // Posicao *pontos_importantes = NULL; //malloc(sizeof(Posicao));
-    // int numero_lugares = 0;
-    // for(int l = 0; l < numero_lugares_temp; l++){
-    //   for(int b = 0; b < num_bots;b++){
-    //     Posicao bot = bots[b].posicao;
-    //     Posicao lugar = pontos_importantes_temp[l];
-    //     if( (bot.x != lugar.x) && (bot.y != lugar.y) ){
-    //       pontos_importantes_sem_bot = realloc(pontos_importantes_sem_bot, sizeof(Posicao) * (l+1) );
-    //       pontos_importantes_sem_bot[l].x = lugar.x;
-    //       pontos_importantes_sem_bot[l].y = lugar.y;
-    //       pontos_importantes_sem_bot[l].tipo = lugar.tipo;
-    //       numero_lugares++;
-    //     }
-    //   }
-    // }
 
     // Agora ele filtra, e retorna TODOS os pontos em que um bot não está encima
     Posicao *pontos_importantes_temp = NULL; //malloc(sizeof(Posicao));
@@ -189,7 +196,7 @@ int main() {
       lugares_proximos[i] = pontos_importantes[i];
     }
 
-    //printPosicoes(9, lugares_proximos);
+    printPosicoes(15, pontos_importantes);
 
 
     // DECISAO PARA ONDE IR
@@ -203,7 +210,7 @@ int main() {
         pescar(&meu_barco);
       }
     } else {
-        mover(&meu_barco, lugar_para_ir, bots, num_bots);
+        mover(&meu_barco, lugar_para_ir, bots_ao_lado, HEIGHT, WIDTH);
     }
 
 

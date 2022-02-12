@@ -56,13 +56,23 @@ Posicao loop_decisao(int estoque, Posicao opcoes[], int i, int max){
       return opcoes[i];
   }
 
-  if( distancia < 3 ){
+  if( relevancia_ponto == perfeito ){
+    return opcoes[i];
+  }
+
+  if( distancia < 5 ){
     if( relevancia_ponto > 3 )
       return opcoes[i];
   }
 
-  if( relevancia_ponto == perfeito ){
-    return opcoes[i];
+  if( distancia < 8 ){
+    if( relevancia_ponto > 2 )
+      return opcoes[i];
+  }
+
+  if( distancia < 10 ){
+    if( relevancia_ponto > 1 )
+      return opcoes[i];
   }
 
   //fprintf(stderr, "Lugar (%d,%d) T%d Est%d  Rel%d \n", opcoes[i].x, opcoes[i].y, tipo, estoque, relevancia_ponto);

@@ -22,4 +22,11 @@ typedef struct IBarco {
   StatusEstoque status_estoque;
 } Barco;
 
+typedef struct ILados {
+  int up;
+  int left;
+  int right;
+  int down;
+} Lados;
+
 #endif
