@@ -18,7 +18,7 @@ void readDataGrid(int h, int w, int grid[h][w]) {
 void readDataBots(int n, Barco bots[n]) {
   //Barco *bots = malloc(sizeof(Posicao) * n);
   for (int i = 0; i < n; i++) {
-    scanf("%s %i %i", &bots[i].id, &bots[i].posicao.x, &bots[i].posicao.y );
+    scanf("%s %i %i", bots[i].id, &bots[i].posicao.x, &bots[i].posicao.y );
   }
 
   //return bots;

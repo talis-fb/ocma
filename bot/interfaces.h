@@ -16,7 +16,8 @@ typedef enum IStatusEstoque  {
 } StatusEstoque;
 
 typedef struct IBarco {
-  char id[MAX_STR];
+  /* char id[MAX_STR]; */
+  char *id;
   Posicao posicao;
   int estoque;
   StatusEstoque status_estoque;
